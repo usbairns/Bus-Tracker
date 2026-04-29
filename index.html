@@ -616,11 +616,12 @@ async function fetchDepartures(direction) {
 
   try {
     const originalUrl = `https://ws.mybustracker.co.uk/?module=json&function=getBusTimes&key=${encodeURIComponent(cfg.apiKey)}&stopId=${encodeURIComponent(stopCode)}&nb=8`;
-    const corsUrl = `https://cors-anywhere.herokuapp.com/${originalUrl}`;
+    const corsUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(originalUrl)}`;
     
     const resp = await fetch(corsUrl);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
+    const wrapper = await resp.json();
+    const data = JSON.parse(wrapper.contents);
     lastFetch[direction] = new Date();
     renderDepartures(el, data, direction);
     setStatus('ok', `Updated ${fmt(lastFetch[direction])}`);
